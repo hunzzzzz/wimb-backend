@@ -134,3 +134,52 @@ CREATE UNIQUE INDEX uk_common_file_represent
     ON wimb.common_file (file_id)
     WHERE represent_yn = 'Y'
 ;
+
+----------------------------------------------------------------------------------------
+-- IDENTIFICATION
+----------------------------------------------------------------------------------------
+CREATE SEQUENCE wimb.seq_identification
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE wimb.identification
+(
+    seq_no     BIGINT PRIMARY KEY    DEFAULT nextval('wimb.seq_identification'),
+    email      VARCHAR(100) NOT NULL,
+    code       VARCHAR(20)  NOT NULL,
+    status     VARCHAR(20)  NOT NULL,
+    purpose    VARCHAR(20)  NOT NULL,
+    started_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP    NOT NULL,
+    fail_count INT          NOT NULL DEFAULT 0,
+    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER SEQUENCE wimb.seq_identification OWNED BY wimb.identification.seq_no;
+
+----------------------------------------------------------------------------------------
+-- API_RESULT
+----------------------------------------------------------------------------------------
+CREATE SEQUENCE wimb.seq_api_result
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE wimb.api_result
+(
+    seq_no       BIGINT PRIMARY KEY   DEFAULT nextval('wimb.seq_api_result'),
+    type         VARCHAR(20) NOT NULL,
+    email        VARCHAR(100),
+    s3_key       VARCHAR(500),
+    status       VARCHAR(20) NOT NULL,
+    fail_message VARCHAR(255),
+    requested_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    responded_at TIMESTAMP
+);
+
+ALTER SEQUENCE wimb.seq_api_result OWNED BY wimb.api_result.seq_no;

@@ -28,6 +28,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
+    // mail
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     // mybatis
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.1.0")
     implementation("org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16")

@@ -84,4 +84,9 @@ enum class ErrorCode(
         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
         message = "비밀번호 암호화에 실패하였습니다."
     ),
+    MAIL_SEND_FAILED(
+        code = "SYS02",
+        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+        message = "이메일 전송에 실패하였습니다."
+    ),
 }
