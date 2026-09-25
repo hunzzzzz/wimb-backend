@@ -42,3 +42,4 @@ out/
 ### Custom ###
 /local/
 application-local.yml
+/logs/
