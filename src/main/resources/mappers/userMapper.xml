@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.moira.wimb.domain.user.mapper.UserMapper">
+    <select id="selectLoginIdChk" resultType="java.lang.Boolean">
+        SELECT EXISTS (SELECT 1 FROM wimb.user WHERE login_id = #{loginId})
+    </select>
+
+    <select id="selectEmailChk" resultType="java.lang.Boolean">
+        SELECT EXISTS (SELECT 1 FROM wimb.user WHERE email = #{email})
+    </select>
+
+    <select id="selectSimpleUserResponse" resultType="com.moira.wimb.domain.user.dto.response.SimpleUserResponse">
+        SELECT U.user_id, U.login_id, U.email, U.role, F.file_url AS image_url
+        FROM wimb.user U
+        LEFT JOIN wimb.common_file F ON F.file_id = U.file_id AND F.file_seq_no = 1
+        WHERE U.user_id = #{userId}
+         AND  U.status  = 'ACTIVE'
+    </select>
+
+    <select id="selectUserByLoginId" resultType="com.moira.wimb.domain.user.entity.User">
+        SELECT U.* FROM wimb.user U WHERE U.login_id = #{loginId}
+    </select>
+
+    <insert id="insertUser">
+        INSERT INTO wimb.user (
+               user_id
+             , login_id
+             , password
+             , email
+             , role
+             , status
+             , file_id
+             , description
+             , visit_count
+             , created_at
+             , updated_at
+             , deleted_at
+        )
+        VALUES (
+               #{userId}
+             , #{loginId}
+             , #{password}
+             , #{email}
+             , #{role}
+             , #{status}
+             , #{fileId}
+             , #{description}
+             , #{visitCount}
+             , #{createdAt}
+             , #{updatedAt}
+             , #{deletedAt}
+        )
+    </insert>
+</mapper>

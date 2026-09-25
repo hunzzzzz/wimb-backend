@@ -19,8 +19,47 @@ enum class ErrorCode(
         message = "유저 정보가 만료되었습니다. 다시 로그인해주세요."
     ),
     FORBIDDEN(
-        code = "CM03",
+        code = "COM03",
         httpStatus = HttpStatus.FORBIDDEN,
         message = "비정상적인 접근입니다."
-    )
+    ),
+
+    // 사용자
+    LOGIN_ID_EXISTS(
+        code = "USR01",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "이미 사용 중인 ID입니다."
+    ),
+    EMAIL_EXISTS(
+        code = "USR02",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "이미 사용 중인 이메일입니다."
+    ),
+    LOGIN_FAILED(
+        code = "USR03",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "ID 혹은 비밀번호가 일치하지 않습니다."
+    ),
+    USER_NOT_FOUND(
+        code = "USR04",
+        httpStatus = HttpStatus.FORBIDDEN,
+        message = "존재하지 않는 사용자입니다."
+    ),
+    BANNED_USER_CANNOT_LOGIN(
+        code = "USR05",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "계정이 정지된 사용자입니다."
+    ),
+    DELETED_USER_CANNOT_LOGIN(
+        code = "USR06",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "회원탈퇴한 계정입니다."
+    ),
+
+    // 시스템
+    PASSWORD_ENCRYPTION_FAILED(
+        code = "SYS01",
+        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+        message = "비밀번호 암호화에 실패하였습니다."
+    ),
 }

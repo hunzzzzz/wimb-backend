@@ -6,5 +6,6 @@ object CommonVariables {
 
     const val UNKNOWN = "UNKNOWN"
 
+    const val USER_ID_PREFIX = "ur"
     const val POST_ID_PREFIX = "ps"
 }

@@ -105,3 +105,32 @@ CREATE TABLE wimb.post_snippet
     created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+----------------------------------------------------------------------------------------
+-- COMMON_FILE
+----------------------------------------------------------------------------------------
+CREATE TABLE wimb.common_file
+(
+    file_id            VARCHAR(50)  NOT NULL,
+    file_seq_no        INT          NOT NULL,
+    user_id            VARCHAR(50)  NOT NULL,
+    status             VARCHAR(20)  NOT NULL,
+    file_url           TEXT         NOT NULL,
+    original_file_name VARCHAR(255) NOT NULL,
+    size               BIGINT       NOT NULL,
+    content_type       VARCHAR(100) NOT NULL,
+    identifier         VARCHAR(100) NOT NULL,
+    s3_key             VARCHAR(500) NOT NULL,
+    represent_yn       CHAR(1)      NOT NULL,
+    started_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    uploaded_at        TIMESTAMP,
+    updated_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_common_file PRIMARY KEY (file_id, file_seq_no),
+    CONSTRAINT fk_common_file_user FOREIGN KEY (user_id) REFERENCES wimb.user (user_id)
+);
+
+CREATE UNIQUE INDEX uk_common_file_represent
+    ON wimb.common_file (file_id)
+    WHERE represent_yn = 'Y'
+;
