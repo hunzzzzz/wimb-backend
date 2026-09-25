@@ -8,4 +8,6 @@ object CommonVariables {
 
     const val USER_ID_PREFIX = "ur"
     const val POST_ID_PREFIX = "ps"
+
+    const val POST_CATEGORY_MAX_COUNT = 10L
 }

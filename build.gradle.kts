@@ -32,6 +32,7 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.1.0")
     implementation("org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16")
     // springboot
+    implementation("org.springframework.boot:spring-boot-starter-aop:3.5.16")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 }

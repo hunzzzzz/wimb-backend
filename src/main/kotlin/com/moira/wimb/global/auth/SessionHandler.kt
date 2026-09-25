@@ -30,7 +30,7 @@ class SessionHandler {
         // 5. 세션 고정 공격 방지: 세션 ID를 새로 발급 (session은 유지, ID만 교체)
         httpReq.changeSessionId()
 
-        // 4. HttpSession에 SecurityContext 등록
+        // 6. HttpSession에 SecurityContext 등록
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context)
     }
 

@@ -4,6 +4,10 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.moira.wimb.domain.post.mapper.PostMapper">
+    <select id="selectCategoryUsingChk" resultType="java.lang.Boolean">
+        SELECT EXISTS (SELECT 1 FROM wimb.post_base WHERE category_id = #{categoryId})
+    </select>
+
     <insert id="insertPostBase">
         INSERT INTO wimb.post_base (
                post_id

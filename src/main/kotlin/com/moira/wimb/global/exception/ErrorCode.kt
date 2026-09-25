@@ -56,6 +56,28 @@ enum class ErrorCode(
         message = "회원탈퇴한 계정입니다."
     ),
 
+    // 게시글
+    CATEGORY_NAME_EXISTS(
+        code = "PST01",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "이미 사용 중인 카테고리명입니다."
+    ),
+    CATEGORY_COUNT_EXCEEDED(
+        code = "PST02",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "카테고리는 최대 10개까지 등록이 가능합니다."
+    ),
+    INVALID_CATEGORY_ORDER(
+        code = "PST03",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "카테고리 순서 변경 요청 정보가 올바르지 않습니다. 목록을 새로고침 후 다시 시도해 주세요."
+    ),
+    CANNOT_DELETE_USING_CATEGORY(
+        code = "PST04",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "게시글이 존재하는 카테고리는 삭제할 수 없습니다."
+    ),
+
     // 시스템
     PASSWORD_ENCRYPTION_FAILED(
         code = "SYS01",

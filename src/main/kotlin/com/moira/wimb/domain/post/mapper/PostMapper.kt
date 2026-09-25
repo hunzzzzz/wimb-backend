@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper
 
 @Mapper
 interface PostMapper {
+    fun selectCategoryUsingChk(categoryId: Long): Boolean
+
     fun insertPostBase(postBase: PostBase)
     fun insertPostSnippet(postSnippet: PostSnippet)
     fun insertPostTagBulk(tags: List<PostTag>)

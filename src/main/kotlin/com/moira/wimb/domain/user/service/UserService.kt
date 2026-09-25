@@ -56,6 +56,8 @@ class UserService(
         val user = userMapper.selectUserByLoginId(request.loginId)
             ?: throw CommonException(ErrorCode.LOGIN_FAILED)
 
+        println(encoder.encode("1234"))
+
         // 2. 유효성 검사
         if (!encoder.matches(request.password, user.password)) {
             throw CommonException(ErrorCode.LOGIN_FAILED)
