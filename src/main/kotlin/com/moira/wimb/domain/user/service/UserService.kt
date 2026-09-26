@@ -1,10 +1,14 @@
 package com.moira.wimb.domain.user.service
 
+import com.moira.wimb.domain.infra.entity.FileIdentifier
+import com.moira.wimb.domain.infra.entity.FileStatus
 import com.moira.wimb.domain.infra.entity.IdentificationPurpose
 import com.moira.wimb.domain.infra.entity.IdentificationStatus
+import com.moira.wimb.domain.infra.mapper.CommonFileMapper
 import com.moira.wimb.domain.infra.mapper.IdentificationMapper
 import com.moira.wimb.domain.user.dto.request.LoginRequest
 import com.moira.wimb.domain.user.dto.request.SignupRequest
+import com.moira.wimb.domain.user.dto.request.UserProfileImageUpdateRequest
 import com.moira.wimb.domain.user.dto.response.SimpleUserResponse
 import com.moira.wimb.domain.user.entity.User
 import com.moira.wimb.domain.user.entity.UserStatus
@@ -22,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserService(
     // mapper
+    private val commonFileMapper: CommonFileMapper,
     private val identificationMapper: IdentificationMapper,
     private val userMapper: UserMapper,
     // utility
@@ -98,5 +103,33 @@ class UserService(
     fun me(userId: String): SimpleUserResponse {
         // 1. SimpleUserResponse 조회
         return userMapper.selectSimpleUserResponse(userId) ?: throw CommonException(ErrorCode.USER_NOT_FOUND)
+    }
+
+    /**
+     * 프로필 사진 수정
+     */
+    @Transactional
+    fun updateProfileImage(userId: String, request: UserProfileImageUpdateRequest) {
+        // 1. 업로드한 신규 CommonFile 조회
+        val commonFile = commonFileMapper.selectCommonFile2(
+            fileId = request.fileId,
+            fileSeqNo = 1,
+            userId = userId,
+            identifier = FileIdentifier.USER_PROFILE_IMAGE.name,
+            status = FileStatus.UPLOADED.name
+        ) ?: throw CommonException(ErrorCode.COMMON_FILE_NOT_FOUND)
+
+        // 2. 업로드한 신규 CommonFile 조회 후 status를 USING으로 변경
+        commonFileMapper.updateStatusByFileId(commonFile.fileId, userId, FileStatus.USING.name)
+
+        // 3. 기존 CommonFile 조회 후 삭제 처리 (soft-delete)
+        val currentFileId = userMapper.selectFileId(userId)
+
+        if (currentFileId != null) {
+            commonFileMapper.updateStatusByFileId(currentFileId, userId, FileStatus.DELETED.name)
+        }
+
+        // 4. User의 fileId 수정
+        userMapper.updateFileId(userId, commonFile.fileId)
     }
 }

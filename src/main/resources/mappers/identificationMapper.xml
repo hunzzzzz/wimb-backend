@@ -10,7 +10,7 @@
         WHERE I.email       = #{email}
          AND  I.purpose     = #{purpose}
          AND  I.expires_at >= CURRENT_TIMESTAMP
-        ORDER BY I.started_at DESC
+        ORDER BY I.created_at DESC
         LIMIT 1
     </select>
 
@@ -20,7 +20,7 @@
              , code
              , status
              , purpose
-             , started_at
+             , created_at
              , expires_at
              , fail_count
              , updated_at
@@ -30,7 +30,7 @@
              , #{code}
              , #{status}
              , #{purpose}
-             , #{startedAt}
+             , #{createdAt}
              , #{expiresAt}
              , #{failCount}
              , #{updatedAt}

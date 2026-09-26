@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
@@ -163,34 +165,82 @@ class CommonFileService(
     fun uploadResult(userId: String, request: FileUploadResultRequest) {
         request.items.forEach { itemRequest ->
             // 1. CommonFile의 status 조회
-            val status = commonFileMapper.selectStatus(
+            val commonFile = commonFileMapper.selectCommonFile(
                 fileId = request.fileId,
                 fileSeqNo = itemRequest.fileSeqNo,
                 userId = userId,
             )
 
-            if (status != null && status == FileStatus.PENDING.name) {
+            if (commonFile != null && commonFile.status == FileStatus.PENDING.name) {
                 val isSuccess = itemRequest.successYn == YES
-                val newStatus = if (isSuccess) FileStatus.UPLOAD_SUCCESS else FileStatus.FAIL
 
-                // 2. CommonFile 수정 (PENDING일 때만)
+                // 2. S3에 HeadObjectRequest 요청을 보내 실제 업로드가 되었는지 확인
+                val isTruelySuccess = isSuccess && runCatching {
+                    s3Client.headObject(
+                        HeadObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(commonFile.s3Key)
+                            .build()
+                    )
+                }.isSuccess
+
+                // 3. CommonFile의 status 수정
                 // ApiResult는 INSERT/UPDATE하지 않는다. (사유: 파일 업로드의 주체는 프론트이기 때문)
-                if (isSuccess) {
-                    commonFileMapper.updateStatusAndUploadedAt(
+                if (isTruelySuccess) {
+                    commonFileMapper.updateStatusUploaded(
                         fileId = request.fileId,
                         fileSeqNo = itemRequest.fileSeqNo,
-                        userId = userId,
-                        status = newStatus.name
+                        userId = userId
                     )
                 } else {
-                    commonFileMapper.updateStatus(
+                    commonFileMapper.updateStatusFailed(
                         fileId = request.fileId,
                         fileSeqNo = itemRequest.fileSeqNo,
-                        userId = userId,
-                        status = newStatus.name
+                        userId = userId
                     )
                 }
             }
         }
+    }
+
+    /**
+     * 파일 삭제 (FileDeleteScheduler에서 호출하는 메서드)
+     */
+    @Transactional
+    fun delete(commonFile: CommonFile) {
+        // 1. DeleteObjectRequest 객체 생성
+        val deleteRequest = DeleteObjectRequest.builder()
+            .bucket(bucketName)
+            .key(commonFile.s3Key)
+            .build()
+
+        runCatching {
+            // 2. S3에서 해당 객체 삭제
+            s3Client.deleteObject(deleteRequest)
+
+            log.info {
+                """
+                [AWS S3] 파일 삭제 성공!
+                - fileId: ${commonFile.fileId}
+                - fileSeqNo: ${commonFile.fileSeqNo}
+                - s3Key: ${commonFile.s3Key}
+                """.trimIndent()
+            }
+        }.onFailure {
+            log.error {
+                """
+                [AWS S3] 파일 삭제 실패!
+                - fileId: ${commonFile.fileId}
+                - fileSeqNo: ${commonFile.fileSeqNo}
+                - s3Key: ${commonFile.s3Key}
+                - message: ${it.message}
+                """.trimIndent()
+            }
+
+            throw CommonException(ErrorCode.S3_DELETE_FAILED)
+        }
+
+        // 3. CommonFile 삭제
+        commonFileMapper.deleteCommonFile(commonFile.fileId, commonFile.fileSeqNo)
     }
 }

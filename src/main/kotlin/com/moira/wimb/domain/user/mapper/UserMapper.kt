@@ -11,6 +11,9 @@ interface UserMapper {
 
     fun selectSimpleUserResponse(userId: String): SimpleUserResponse?
     fun selectUserByLoginId(loginId: String): User?
+    fun selectFileId(userId: String): String?
 
     fun insertUser(user: User)
+
+    fun updateFileId(userId: String, fileId: String)
 }

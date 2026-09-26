@@ -24,6 +24,10 @@
         SELECT U.* FROM wimb.user U WHERE U.login_id = #{loginId}
     </select>
 
+    <select id="selectFileId" resultType="java.lang.String">
+        SELECT U.file_id FROM wimb.user U WHERE U.user_id = #{userId}
+    </select>
+
     <insert id="insertUser">
         INSERT INTO wimb.user (
                user_id
@@ -54,4 +58,12 @@
              , #{deletedAt}
         )
     </insert>
+
+    <update id="updateFileId">
+        UPDATE wimb.user
+        SET
+               file_id    = #{fileId}
+             , updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = #{userId}
+    </update>
 </mapper>

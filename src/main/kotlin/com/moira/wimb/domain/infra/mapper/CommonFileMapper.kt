@@ -5,10 +5,15 @@ import org.apache.ibatis.annotations.Mapper
 
 @Mapper
 interface CommonFileMapper {
-    fun selectStatus(fileId: String, fileSeqNo: Int, userId: String): String?
     fun selectAllForDeleteScheduler(): List<CommonFile>
-    fun selectIdAndUserIdChk(fileId: String, userId: String): Boolean
+
     fun selectCommonFile(
+        fileId: String,
+        fileSeqNo: Int,
+        userId: String
+    ): CommonFile?
+
+    fun selectCommonFile2(
         fileId: String,
         fileSeqNo: Int,
         userId: String,
@@ -18,25 +23,11 @@ interface CommonFileMapper {
 
     fun insertCommonFileBulk(files: List<CommonFile>)
 
-    fun updateStatus(
-        fileId: String,
-        fileSeqNo: Int,
-        userId: String,
-        status: String
-    )
+    fun updateStatusUploaded(fileId: String, fileSeqNo: Int, userId: String)
 
-    fun updateStatusAndUploadedAt(
-        fileId: String,
-        fileSeqNo: Int,
-        userId: String,
-        status: String
-    )
+    fun updateStatusFailed(fileId: String, fileSeqNo: Int, userId: String)
 
-    fun updateStatusByFileId(
-        fileId: String,
-        userId: String,
-        status: String,
-    )
+    fun updateStatusByFileId(fileId: String, userId: String, status: String)
 
-    fun delete(fileId: String, fileSeqNo: Int)
+    fun deleteCommonFile(fileId: String, fileSeqNo: Int)
 }

@@ -9,7 +9,7 @@ data class Identification(
     val code: String,
     val status: String = IdentificationStatus.PENDING.name,
     val purpose: String,
-    val startedAt: LocalDateTime = LocalDateTime.now(),
+    val createdAt: LocalDateTime = LocalDateTime.now(),
     val expiresAt: LocalDateTime = LocalDateTime.now().plusMinutes(MAIL_SEND_EXPIRY_MIN),
     val failCount: Int = 0,
     val updatedAt: LocalDateTime = LocalDateTime.now()

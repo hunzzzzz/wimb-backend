@@ -14,7 +14,7 @@ class CommonFile(
     var identifier: String,
     var s3Key: String,
     var representYn: String, // 대표이미지 여부 (Y/N)
-    var startedAt: LocalDateTime = LocalDateTime.now(), // status가 PENDING이 되는 시점 (객체 생성 시)
+    var createdAt: LocalDateTime = LocalDateTime.now(), // status가 PENDING이 되는 시점 (객체 생성 시)
     var uploadedAt: LocalDateTime? = null, // status가 UPLOAD_SUCCESS가 되는 시점
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 )

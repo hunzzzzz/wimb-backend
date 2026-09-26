@@ -140,7 +140,7 @@ CREATE TABLE wimb.common_file
     identifier         VARCHAR(100) NOT NULL,
     s3_key             VARCHAR(500) NOT NULL,
     represent_yn       CHAR(1)      NOT NULL,
-    started_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     uploaded_at        TIMESTAMP,
     updated_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -170,7 +170,7 @@ CREATE TABLE wimb.identification
     code       VARCHAR(20)  NOT NULL,
     status     VARCHAR(20)  NOT NULL,
     purpose    VARCHAR(20)  NOT NULL,
-    started_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMP    NOT NULL,
     fail_count INT          NOT NULL DEFAULT 0,
     updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP

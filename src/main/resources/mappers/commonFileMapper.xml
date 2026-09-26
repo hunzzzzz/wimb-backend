@@ -3,18 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.moira.wimb.domain.file.mapper.CommonFileMapper">
-    <select id="selectStatus" resultType="java.lang.String">
-        SELECT status FROM wimb.common_file WHERE file_id = #{fileId} AND file_seq_no = #{fileSeqNo} AND user_id = #{userId}
-    </select>
-
+<mapper namespace="com.moira.wimb.domain.infra.mapper.CommonFileMapper">
     <select id="selectAllForDeleteScheduler" resultType="com.moira.wimb.domain.infra.entity.CommonFile">
         SELECT F.*
         FROM wimb.common_file F
         WHERE F.status = 'DELETED'
-         OR   (F.status = 'PENDING'        AND F.started_at  <![CDATA[ <= ]]> CURRENT_TIMESTAMP - INTERVAL '1 day')
-         OR   (F.status = 'UPLOAD_SUCCESS' AND F.uploaded_at <![CDATA[ <= ]]> CURRENT_TIMESTAMP - INTERVAL '1 day')
-         OR   (F.status = 'FAIL'           AND F.started_at  <![CDATA[ <= ]]> CURRENT_TIMESTAMP - INTERVAL '1 day')
+         OR   (F.status = 'PENDING'  AND F.created_at  <![CDATA[ <= ]]> CURRENT_TIMESTAMP - INTERVAL '1 day')
+         OR   (F.status = 'UPLOADED' AND F.uploaded_at <![CDATA[ <= ]]> CURRENT_TIMESTAMP - INTERVAL '1 day')
+         OR   (F.status = 'FAILED'   AND F.created_at  <![CDATA[ <= ]]> CURRENT_TIMESTAMP - INTERVAL '1 day')
     </select>
 
     <select id="selectIdAndUserIdChk" resultType="java.lang.Boolean">
@@ -22,6 +18,14 @@
     </select>
 
     <select id="selectCommonFile" resultType="com.moira.wimb.domain.infra.entity.CommonFile">
+        SELECT F.*
+        FROM wimb.common_file F
+        WHERE F.file_id     = #{fileId}
+         AND  F.file_seq_no = #{fileSeqNo}
+         AND  F.user_id     = #{userId}
+    </select>
+
+    <select id="selectCommonFile2" resultType="com.moira.wimb.domain.infra.entity.CommonFile">
         SELECT F.*
         FROM wimb.common_file F
         WHERE F.file_id     = #{fileId}
@@ -44,7 +48,7 @@
              , identifier
              , s3_key
              , represent_yn
-             , started_at
+             , created_at
              , uploaded_at
              , updated_at
         )
@@ -62,29 +66,29 @@
              , #{file.identifier}
              , #{file.s3Key}
              , #{file.representYn}
-             , #{file.startedAt}
+             , #{file.createdAt}
              , #{file.uploadedAt}
              , #{file.updatedAt}
         )
         </foreach>
     </insert>
 
-    <update id="updateStatus">
+    <update id="updateStatusUploaded">
         UPDATE wimb.common_file
         SET
-               status      = #{status}
+               status      = 'UPLOADED'
              , updated_at  = CURRENT_TIMESTAMP
+             , uploaded_at = CURRENT_TIMESTAMP
         WHERE file_id      = #{fileId}
          AND  file_seq_no  = #{fileSeqNo}
          AND  user_id      = #{userId}
     </update>
 
-    <update id="updateStatusAndUploadedAt">
+    <update id="updateStatusFailed">
         UPDATE wimb.common_file
         SET
-               status      = #{status}
+               status      = 'FAILED'
              , updated_at  = CURRENT_TIMESTAMP
-             , uploaded_at = CURRENT_TIMESTAMP
         WHERE file_id      = #{fileId}
          AND  file_seq_no  = #{fileSeqNo}
          AND  user_id      = #{userId}

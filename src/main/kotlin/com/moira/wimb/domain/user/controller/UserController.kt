@@ -2,16 +2,14 @@ package com.moira.wimb.domain.user.controller
 
 import com.moira.wimb.domain.user.dto.request.LoginRequest
 import com.moira.wimb.domain.user.dto.request.SignupRequest
+import com.moira.wimb.domain.user.dto.request.UserProfileImageUpdateRequest
 import com.moira.wimb.domain.user.dto.response.SimpleUserResponse
 import com.moira.wimb.domain.user.service.UserService
 import com.moira.wimb.global.auth.LoginUser
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class UserController(
@@ -60,5 +58,18 @@ class UserController(
         val response = userService.me(userId)
 
         return ResponseEntity.status(HttpStatus.OK).body(response)
+    }
+
+    /**
+     * 프로필 사진 수정
+     */
+    @PatchMapping("/api/me/image")
+    fun updateProfileImage(
+        @LoginUser userId: String,
+        @RequestBody request: UserProfileImageUpdateRequest
+    ): ResponseEntity<Nothing> {
+        userService.updateProfileImage(userId, request)
+
+        return ResponseEntity.status(HttpStatus.OK).body(null)
     }
 }
