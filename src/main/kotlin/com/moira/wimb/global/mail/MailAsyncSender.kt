@@ -1,6 +1,8 @@
 package com.moira.wimb.global.mail
 
+import com.moira.wimb.domain.infra.entity.IdentificationStatus
 import com.moira.wimb.domain.infra.service.ApiResultLogger
+import com.moira.wimb.domain.infra.service.IdentificationTransactionService
 import com.moira.wimb.global.exception.CommonException
 import com.moira.wimb.global.exception.ErrorCode
 import com.moira.wimb.global.mail.event.IdentificationMailEvent
@@ -20,6 +22,9 @@ import org.thymeleaf.spring6.SpringTemplateEngine
 
 @Service
 class MailAsyncSender(
+    // service
+    private val identificationTransactionService: IdentificationTransactionService,
+
     // utility
     private val apiResultLogger: ApiResultLogger,
     private val javaMailSender: JavaMailSender,
@@ -87,7 +92,14 @@ class MailAsyncSender(
     private fun executeMainLogic(event: MailEvent, isSuccess: Boolean) {
         when (event) {
             is IdentificationMailEvent -> {
-                // TODO
+                if (isSuccess) identificationTransactionService.updateStatus(
+                    identificationSeqNo = event.identificationSeqNo,
+                    status = IdentificationStatus.MAIL_SENT
+                )
+                else identificationTransactionService.updateStatus(
+                    identificationSeqNo = event.identificationSeqNo,
+                    status = IdentificationStatus.MAIL_SENT_FAILED
+                )
             }
         }
     }

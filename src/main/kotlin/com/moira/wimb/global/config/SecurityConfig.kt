@@ -78,7 +78,8 @@ class SecurityConfig(
                 authorize(HttpMethod.POST, "/api/signup/**", permitAll)
                 // 로그인
                 authorize(HttpMethod.POST, "/api/login/**", permitAll)
-                authorize(HttpMethod.POST, "/api/posts/**", permitAll)
+                // 본인인증
+                authorize(HttpMethod.POST, "/api/identification/**", permitAll)
                 // 나머지 요청은 인증 필수
                 authorize(anyRequest, authenticated)
             }

@@ -1,5 +1,8 @@
 package com.moira.wimb.domain.user.service
 
+import com.moira.wimb.domain.infra.entity.IdentificationPurpose
+import com.moira.wimb.domain.infra.entity.IdentificationStatus
+import com.moira.wimb.domain.infra.mapper.IdentificationMapper
 import com.moira.wimb.domain.user.dto.request.LoginRequest
 import com.moira.wimb.domain.user.dto.request.SignupRequest
 import com.moira.wimb.domain.user.dto.response.SimpleUserResponse
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserService(
     // mapper
+    private val identificationMapper: IdentificationMapper,
     private val userMapper: UserMapper,
     // utility
     private val encoder: PasswordEncoder,
@@ -36,6 +40,13 @@ class UserService(
         if (userMapper.selectEmailChk(request.email)) {
             throw CommonException(ErrorCode.EMAIL_EXISTS)
         }
+        val identification = identificationMapper.selectRecentIdentification(
+            email = request.email,
+            purpose = IdentificationPurpose.SIGNUP.name
+        )
+        if (identification == null || identification.status != IdentificationStatus.VERIFIED.name) {
+            throw CommonException(ErrorCode.NO_IDENTIFICATION)
+        }
 
         // 2. 비밀번호 암호화
         val encodedPassword = encoder.encode(request.password)
@@ -45,6 +56,9 @@ class UserService(
         val userId = CommonUtils.createRandomId(USER_ID_PREFIX)
         val user = User.create(userId, request, encodedPassword)
         userMapper.insertUser(user)
+
+        // 4. Identification의 status를 USED로 변경
+        identificationMapper.updateStatus(identification.seqNo, IdentificationStatus.USED.name)
     }
 
     /**
@@ -55,8 +69,6 @@ class UserService(
         // 1. User 조회
         val user = userMapper.selectUserByLoginId(request.loginId)
             ?: throw CommonException(ErrorCode.LOGIN_FAILED)
-
-        println(encoder.encode("1234"))
 
         // 2. 유효성 검사
         if (!encoder.matches(request.password, user.password)) {

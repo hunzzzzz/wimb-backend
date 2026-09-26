@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.moira.wimb.domain.infra.mapper.IdentificationMapper">
+    <select id="selectRecentIdentification" resultType="com.moira.wimb.domain.infra.entity.Identification">
+        SELECT I.*
+        FROM wimb.identification I
+        WHERE I.email       = #{email}
+         AND  I.purpose     = #{purpose}
+         AND  I.expires_at >= CURRENT_TIMESTAMP
+        ORDER BY I.started_at DESC
+        LIMIT 1
+    </select>
+
+    <insert id="insertIdentification" useGeneratedKeys="true" keyProperty="seqNo" keyColumn="seq_no">
+        INSERT INTO wimb.identification (
+               email
+             , code
+             , status
+             , purpose
+             , started_at
+             , expires_at
+             , fail_count
+             , updated_at
+        )
+        VALUES (
+               #{email}
+             , #{code}
+             , #{status}
+             , #{purpose}
+             , #{startedAt}
+             , #{expiresAt}
+             , #{failCount}
+             , #{updatedAt}
+        )
+    </insert>
+
+    <update id="updateStatus">
+        UPDATE wimb.identification
+        SET
+               status     = #{status}
+             , updated_at = CURRENT_TIMESTAMP
+        WHERE seq_no = #{seqNo}
+    </update>
+
+    <update id="updateStatusAndExpiresAt">
+        UPDATE wimb.identification
+        SET
+               status     = #{status}
+             , expires_at = #{expiresAt}
+             , updated_at = CURRENT_TIMESTAMP
+        WHERE  seq_no     = #{seqNo}
+    </update>
+
+    <update id="updateFailCountIncrement">
+        UPDATE wimb.identification
+        SET
+               fail_count = fail_count + 1
+             , updated_at = CURRENT_TIMESTAMP
+        WHERE seq_No = #{seqNo}
+    </update>
+</mapper>

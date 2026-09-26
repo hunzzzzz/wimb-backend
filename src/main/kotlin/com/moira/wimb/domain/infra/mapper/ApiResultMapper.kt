@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper
 
 @Mapper
 interface ApiResultMapper {
-    fun selectApiMailResultInOneMinuteChk(email: String): Boolean
+    fun selectRepeatInOneMinuteChk(email: String): Boolean
 
     fun insertApiResult(apiResult: ApiResult): Long
 

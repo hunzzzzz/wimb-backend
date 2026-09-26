@@ -78,6 +78,43 @@ enum class ErrorCode(
         message = "게시글이 존재하는 카테고리는 삭제할 수 없습니다."
     ),
 
+    // 메일
+    ONLY_ONE_MAIL_IN_MINUTE(
+        code = "EML01",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "인증번호 메일 전송은 1분에 1회만 가능합니다. 잠시 후 다시 시도해주세요."
+    ),
+    EXPIRED_IDENTIFICATION_CODE(
+        code = "EML02",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "인증번호가 만료되었거나 존재하지 않습니다. 다시 시도해주세요.",
+    ),
+    WRONG_IDENTIFICATION_CODE(
+        code = "EML03",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "입력하신 인증번호가 올바르지 않습니다. 다시 확인해주세요.",
+    ),
+    ALREADY_VERIFIED(
+        code = "EML04",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "이미 인증이 완료되었습니다."
+    ),
+    NO_IDENTIFICATION(
+        code = "EML05",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "본인인증을 먼저 진행해주세요."
+    ),
+    CODE_CONFIRM_COUNT_EXCEEDED(
+        code = "EML06",
+        httpStatus = HttpStatus.BAD_REQUEST,
+        message = "인증번호 확인 요청 최대 횟수를 초과하였습니다. 잠시 후 다시 시도해주세요."
+    ),
+    INVALID_IDENTIFICATION_PURPOSE(
+        code = "EML07",
+        httpStatus = HttpStatus.FORBIDDEN,
+        message = "유효하지 않은 본인인증 목적입니다."
+    ),
+
     // 시스템
     PASSWORD_ENCRYPTION_FAILED(
         code = "SYS01",

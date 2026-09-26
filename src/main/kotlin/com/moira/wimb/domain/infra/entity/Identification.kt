@@ -15,7 +15,7 @@ data class Identification(
     val updatedAt: LocalDateTime = LocalDateTime.now()
 ) {
     companion object {
-        fun from(email: String, code: String, purpose: IdentificationPurpose): Identification {
+        fun create(email: String, code: String, purpose: IdentificationPurpose): Identification {
             return Identification(
                 email = email,
                 code = code,
