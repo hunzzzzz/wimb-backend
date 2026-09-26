@@ -77,6 +77,21 @@ enum class ErrorCode(
         httpStatus = HttpStatus.BAD_REQUEST,
         message = "게시글이 존재하는 카테고리는 삭제할 수 없습니다."
     ),
+    INVALID_POST_SEARCH_TYPE(
+        code = "PST05",
+        httpStatus = HttpStatus.FORBIDDEN,
+        message = "유효하지 않은 게시글 조회 방식입니다."
+    ),
+    INVALID_POST_TYPE(
+        code = "PST06",
+        httpStatus = HttpStatus.FORBIDDEN,
+        message = "유효하지 않은 게시글 유형입니다."
+    ),
+    INVALID_POST_VISIBLITY(
+        code = "PST07",
+        httpStatus = HttpStatus.FORBIDDEN,
+        message = "유효하지 않은 게시글 공개범위입니다."
+    ),
 
     // 메일
     ONLY_ONE_MAIL_IN_MINUTE(

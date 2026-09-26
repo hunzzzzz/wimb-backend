@@ -4,8 +4,42 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.moira.wimb.domain.post.mapper.PostMapper">
+    <select id="selectIdAndUserIdChk" resultType="java.lang.Boolean">
+        SELECT EXISTS (SELECT 1 FROM wimb.post_base WHERE post_id = #{postId} AND user_id = #{userId})
+    </select>
+
     <select id="selectCategoryUsingChk" resultType="java.lang.Boolean">
         SELECT EXISTS (SELECT 1 FROM wimb.post_base WHERE category_id = #{categoryId})
+    </select>
+
+    <select id="selectAll" resultType="com.moira.wimb.domain.post.dto.response.PostListResponse">
+        SELECT
+               P.post_id
+             , P.category_id
+             , P.type
+             , P.title
+             , P.created_at
+             , P.updated_at
+        FROM wimb.post_base P
+        INNER JOIN wimb.post_category PC ON PC.post_category_id = P.category_id
+        WHERE P.user_id = #{userId}
+         AND  P.status  = 'ACTIVE'
+        <choose>
+            <when test='searchType != null and searchType == "CATEGORY"'>
+                ORDER BY PC.sort_order ASC, P.updated_at ASC
+            </when>
+            <when test='searchType != null and searchType == "POST_TYPE"'>
+                ORDER BY CASE WHEN P.type = 'SNIPPET'          THEN 1
+                              WHEN P.type = 'NORMAL'           THEN 2
+                              WHEN P.type = 'SEQUENCE'         THEN 3
+                              WHEN P.type = 'TROUBLE_SHOOTING' THEN 4
+                              ELSE 999
+                         END ASC, P.updated_at ASC
+            </when>
+            <otherwise>
+                P.updated_at ASC
+            </otherwise>
+        </choose>
     </select>
 
     <insert id="insertPostBase">
@@ -20,6 +54,7 @@
              , view_count
              , created_at
              , updated_at
+             , deleted_at
         )
         VALUES (
                #{postId}
@@ -32,6 +67,7 @@
              , #{viewCount}
              , #{createdAt}
              , #{updatedAt}
+             , #{deletedAt}
         )
     </insert>
 
@@ -49,6 +85,25 @@
              , #{code}
              , #{description}
              , #{language}
+             , #{createdAt}
+             , #{updatedAt}
+        )
+    </insert>
+
+    <insert id="insertPostNormal">
+        INSERT INTO wimb.post_normal (
+               post_id
+             , content
+             , plain_content
+             , file_id
+             , created_at
+             , updated_at
+        )
+        VALUES (
+               #{postId}
+             , #{content}
+             , #{plainContent}
+             , #{fileId}
              , #{createdAt}
              , #{updatedAt}
         )
@@ -73,4 +128,12 @@
         )
         </foreach>
     </insert>
+
+    <update id="updatePostStatusDeleted">
+        UPDATE wimb.post_base
+        SET
+               status     = 'DELETED'
+             , deleted_at = CURRENT_TIMESTAMP
+        WHERE post_id = #{postId}
+    </update>
 </mapper>

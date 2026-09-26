@@ -1,6 +1,7 @@
 package com.moira.wimb.global.auth
 
 import com.moira.wimb.domain.category.mapper.PostCategoryMapper
+import com.moira.wimb.domain.post.mapper.PostMapper
 import com.moira.wimb.global.exception.CommonException
 import com.moira.wimb.global.exception.ErrorCode
 import org.aspectj.lang.JoinPoint
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable
 @Aspect
 @Component
 class ParameterAuthCheckAspect(
-    private val postCategoryMapper: PostCategoryMapper
+    private val postCategoryMapper: PostCategoryMapper,
+    private val postMapper: PostMapper
 ) {
     @Before("@annotation(com.moira.wimb.global.auth.ParameterAuthCheck)")
     fun checkMember(joinPoint: JoinPoint) {
@@ -25,6 +27,7 @@ class ParameterAuthCheckAspect(
 
         var userId: String? = null
         var postCategoryId: Long? = null
+        var postId: String? = null
 
         for (i in args.indices) {
             val annotations = parameterAnnotations[i]
@@ -42,6 +45,11 @@ class ParameterAuthCheckAspect(
             if (hasPathVariable && parameterName == "postCategoryId") {
                 postCategoryId = args[i] as? Long
             }
+
+            // 4. postId 추출 (@PathVariable) (필수값 x)
+            if (hasPathVariable && parameterName == "postId") {
+                postId = args[i] as? String
+            }
         }
 
         // 4. 유효성 검사
@@ -49,6 +57,8 @@ class ParameterAuthCheckAspect(
             userId == null
             ||
             (postCategoryId != null && !postCategoryMapper.selectIdAndUserIdChk(postCategoryId, userId))
+            ||
+            (postId != null && !postMapper.selectIdAndUserIdChk(postId, userId))
         ) {
             throw CommonException(ErrorCode.FORBIDDEN)
         }

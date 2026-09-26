@@ -87,6 +87,7 @@ CREATE TABLE wimb.post_tag
     sort_order INT         NOT NULL,
     created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     CONSTRAINT fk_post_tag_post_base FOREIGN KEY (post_id) REFERENCES wimb.post_base (post_id)
 );
@@ -103,7 +104,24 @@ CREATE TABLE wimb.post_snippet
     description TEXT        NOT NULL,
     language    VARCHAR(30) NOT NULL,
     created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_post_snippet_post_base FOREIGN KEY (post_id) REFERENCES wimb.post_base (post_id)
+);
+
+----------------------------------------------------------------------------------------
+-- POST_NORMAL
+----------------------------------------------------------------------------------------
+CREATE TABLE wimb.post_normal
+(
+    post_id       VARCHAR(50) PRIMARY KEY,
+    content       TEXT      NOT NULL,
+    plain_content TEXT      NOT NULL,
+    file_id       VARCHAR(50),
+    created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_post_normal_post_base FOREIGN KEY (post_id) REFERENCES wimb.post_base (post_id)
 );
 
 ----------------------------------------------------------------------------------------

@@ -13,7 +13,8 @@ data class PostBase(
     val visibility: String,
     val viewCount: Int = 0,
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val updatedAt: LocalDateTime = LocalDateTime.now()
+    val updatedAt: LocalDateTime = LocalDateTime.now(),
+    val deletedAt: LocalDateTime? = null
 ) {
     companion object {
         fun create(postId: String, userId: String, request: PostAddRequest): PostBase {
