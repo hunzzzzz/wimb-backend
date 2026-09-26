@@ -130,6 +130,23 @@ enum class ErrorCode(
         message = "유효하지 않은 본인인증 목적입니다."
     ),
 
+    // 파일
+    INVALID_FILE_IDENTIFIER(
+        code = "FLE01",
+        httpStatus = HttpStatus.FORBIDDEN,
+        message = "유효하지 않은 파일 구분자입니다."
+    ),
+    INVALID_REPRESENT_YN(
+        code = "FLE02",
+        httpStatus = HttpStatus.FORBIDDEN,
+        message = "잘못된 파라미터 값입니다."
+    ),
+    COMMON_FILE_NOT_FOUND(
+        code = "FLE03",
+        httpStatus = HttpStatus.FORBIDDEN,
+        message = "존재하지 않는 파일입니다."
+    ),
+
     // 시스템
     PASSWORD_ENCRYPTION_FAILED(
         code = "SYS01",
@@ -141,4 +158,14 @@ enum class ErrorCode(
         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
         message = "이메일 전송에 실패하였습니다."
     ),
+    S3_PRESIGNED_URL_CREATE_FAILED(
+        code = "SYS03",
+        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+        message = "AWS S3 Presigned Url 생성에 실패하였습니다."
+    ),
+    S3_DELETE_FAILED(
+        code = "SYS04",
+        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+        message = "AWS S3 파일 삭제에 실패하였습니다."
+    )
 }

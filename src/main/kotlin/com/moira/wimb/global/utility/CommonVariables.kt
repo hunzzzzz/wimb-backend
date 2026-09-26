@@ -8,6 +8,7 @@ object CommonVariables {
 
     const val USER_ID_PREFIX = "ur"
     const val POST_ID_PREFIX = "ps"
+    const val FILE_ID_PREFIX = "fe"
 
     const val UTF_8 = "UTF-8"
     const val MAIL_SEND_EXPIRY_MIN = 5L

@@ -1,5 +1,6 @@
 package com.moira.wimb.global.utility
 
+import com.moira.wimb.domain.infra.entity.FileIdentifier
 import java.util.concurrent.ThreadLocalRandom
 
 object CommonUtils {
@@ -20,6 +21,13 @@ object CommonUtils {
      */
     inline fun <reified T : Enum<T>> isValidEnum(value: String): Boolean {
         return runCatching { enumValueOf<T>(value) }.isSuccess
+    }
+
+    /**
+     * AWS S3 Key값 추출
+     */
+    fun getS3Key(identifier: FileIdentifier, fileId: String, fileSeqNo: Int, originalFileName: String): String {
+        return "${identifier.name}/${fileId}/${fileSeqNo}_${originalFileName}"
     }
 
     /**

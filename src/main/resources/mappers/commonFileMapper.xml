@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.moira.wimb.domain.file.mapper.CommonFileMapper">
+    <select id="selectStatus" resultType="java.lang.String">
+        SELECT status FROM wimb.common_file WHERE file_id = #{fileId} AND file_seq_no = #{fileSeqNo} AND user_id = #{userId}
+    </select>
+
+    <select id="selectAllForDeleteScheduler" resultType="com.moira.wimb.domain.infra.entity.CommonFile">
+        SELECT F.*
+        FROM wimb.common_file F
+        WHERE F.status = 'DELETED'
+         OR   (F.status = 'PENDING'        AND F.started_at  <![CDATA[ <= ]]> CURRENT_TIMESTAMP - INTERVAL '1 day')
+         OR   (F.status = 'UPLOAD_SUCCESS' AND F.uploaded_at <![CDATA[ <= ]]> CURRENT_TIMESTAMP - INTERVAL '1 day')
+         OR   (F.status = 'FAIL'           AND F.started_at  <![CDATA[ <= ]]> CURRENT_TIMESTAMP - INTERVAL '1 day')
+    </select>
+
+    <select id="selectIdAndUserIdChk" resultType="java.lang.Boolean">
+        SELECT EXISTS (SELECT 1 FROM wimb.common_file WHERE file_id = #{fileId} AND user_id = #{userId})
+    </select>
+
+    <select id="selectCommonFile" resultType="com.moira.wimb.domain.infra.entity.CommonFile">
+        SELECT F.*
+        FROM wimb.common_file F
+        WHERE F.file_id     = #{fileId}
+         AND  F.file_seq_no = #{fileSeqNo}
+         AND  F.user_id     = #{userId}
+         AND  F.identifier  = #{identifier}
+         AND  F.status      = #{status}
+    </select>
+
+    <insert id="insertCommonFileBulk" parameterType="java.util.List">
+        INSERT INTO wimb.common_file (
+               file_id
+             , file_seq_no
+             , user_id
+             , status
+             , file_url
+             , original_file_name
+             , size
+             , content_type
+             , identifier
+             , s3_key
+             , represent_yn
+             , started_at
+             , uploaded_at
+             , updated_at
+        )
+        VALUES
+        <foreach collection="files" item="file" separator=",">
+        (
+               #{file.fileId}
+             , #{file.fileSeqNo}
+             , #{file.userId}
+             , #{file.status}
+             , #{file.fileUrl}
+             , #{file.originalFileName}
+             , #{file.size}
+             , #{file.contentType}
+             , #{file.identifier}
+             , #{file.s3Key}
+             , #{file.representYn}
+             , #{file.startedAt}
+             , #{file.uploadedAt}
+             , #{file.updatedAt}
+        )
+        </foreach>
+    </insert>
+
+    <update id="updateStatus">
+        UPDATE wimb.common_file
+        SET
+               status      = #{status}
+             , updated_at  = CURRENT_TIMESTAMP
+        WHERE file_id      = #{fileId}
+         AND  file_seq_no  = #{fileSeqNo}
+         AND  user_id      = #{userId}
+    </update>
+
+    <update id="updateStatusAndUploadedAt">
+        UPDATE wimb.common_file
+        SET
+               status      = #{status}
+             , updated_at  = CURRENT_TIMESTAMP
+             , uploaded_at = CURRENT_TIMESTAMP
+        WHERE file_id      = #{fileId}
+         AND  file_seq_no  = #{fileSeqNo}
+         AND  user_id      = #{userId}
+    </update>
+
+    <update id="updateStatusByFileId">
+        UPDATE wimb.common_file
+        SET
+               status      = #{status}
+             , updated_at  = CURRENT_TIMESTAMP
+        WHERE file_id      = #{fileId}
+         AND  user_id      = #{userId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM wimb.common_file WHERE file_id = #{fileId} AND file_seq_no = #{fileSeqNo}
+    </delete>
+</mapper>
